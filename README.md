@@ -1,7 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-![Untitled design](https://github.com/abdullahridwan/fastFlutter/assets/53100755/7ee04332-5c16-4221-9e48-520ca7192ffc)
-
 ![Untitled design](https://github.com/abdullahridwan/fastFlutter/assets/53100755/dcd32aa0-9fab-48a9-ba02-5ede7542ae1b)
 
 
