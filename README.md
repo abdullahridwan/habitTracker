@@ -1,3 +1,4 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 Setup a project with Firebase, Onboarding screen, and authentication flow- fast.
 There are 4 easy steps: 
 
