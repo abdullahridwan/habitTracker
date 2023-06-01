@@ -2,6 +2,7 @@
 
 ![Untitled design](https://github.com/abdullahridwan/fastFlutter/assets/53100755/7ee04332-5c16-4221-9e48-520ca7192ffc)
 
+![Untitled design](https://github.com/abdullahridwan/fastFlutter/assets/53100755/dcd32aa0-9fab-48a9-ba02-5ede7542ae1b)
 
 
 Setup a project with Firebase, Onboarding screen, and authentication flow- fast.
