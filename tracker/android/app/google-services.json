@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "237394542530",
+    "project_id": "chat-tutorial-f320f",
+    "storage_bucket": "chat-tutorial-f320f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237394542530:android:bd69bac9fd444e2184a05b",
+        "android_client_info": {
+          "package_name": "com.example.tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "237394542530-rpa7meno5d28gv7k480msivbtr6bf120.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-lk7Ql0S8TXKw1F8YichCfDmRzmMh9A0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "237394542530-rpa7meno5d28gv7k480msivbtr6bf120.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "237394542530-7rlbkmbj81omippi5b1bgjm0revgpk6k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.abdullahridwan.runningLog"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
