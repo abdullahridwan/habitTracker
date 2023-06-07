@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:ms_undraw/ms_undraw.dart';
+import 'package:tracker/Firebase/config.dart';
 import 'package:tracker/components/rect_button.dart';
 import 'package:tracker/components/rect_textformfield.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
@@ -71,7 +72,7 @@ class _SignupState extends State<Signup> {
         SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text(
-              "Oops! There's something wrong with your email or password. Check again!"),
+              "Oops! There's something wrong with your email or password. Check again! ${e.toString()}"),
         ),
       );
     }
@@ -79,7 +80,9 @@ class _SignupState extends State<Signup> {
 
   Future addUserDetails(
       String email, String password, String firstname, String lastname) async {
-    await FirebaseFirestore.instance.collection("users2").add({
+    await FirebaseFirestore.instance
+        .collection(CONFIG["userCollectionName"]!)
+        .add({
       "email": email,
       "password": password,
       "first name": firstname,

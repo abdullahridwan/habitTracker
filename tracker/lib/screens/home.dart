@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:tracker/screens/task.dart';
+import 'package:tracker/Firebase/Models/TaskModel.dart';
+import 'package:tracker/Firebase/Models/TaskTile.dart';
 
+import '../Firebase/firebase_helper.dart';
 import '../components/rect_textformfield.dart';
 import 'package:intl/intl.dart'; // Import the intl package for date formatting
 
@@ -14,13 +16,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int itemsDone = 0;
-  // late ValueNotifier<int> countNotifier;
   TextEditingController newTask = TextEditingController();
   late Map<DateTime, int>? data;
 
-  Map<String, bool> tasks = {
-    "Your first task!": false,
-  };
+  Stream<List<TaskModel>> tasks = taskModelHelper.getAll();
 
   increaseCount() {
     setState(() {
@@ -34,41 +33,48 @@ class _HomeState extends State<Home> {
     });
   }
 
-  addNewTaskToTasks() {
+  addNewTask() {
+    var newTask = TaskModel(item: this.newTask.text, isDone: false);
+    newTask.addTask();
     setState(() {
-      tasks[newTask.text] = false;
-      newTask.text = "";
+      this.newTask.clear();
     });
   }
 
-  deleteTask(String itemToUpdate) {
-    setState(() {
-      tasks.remove(itemToUpdate);
-    });
-  }
+  // addNewTaskToTasks(TaskModel t) {
+  //   setState(() {
+  //     tasks.add(t);
+  //   });
+  // }
 
-  updateTask(String itemToUpdate, bool isDone, String newTaskText) {
-    setState(() {
-      tasks.remove(itemToUpdate);
-      tasks[newTaskText] = isDone;
-    });
-  }
+  // deleteTask(String itemToUpdate) {
+  //   setState(() {
+  //     tasks.remove(itemToUpdate);
+  //   });
+  // }
 
-  toggleisDone(String taskName) {
-    print("Task Name: ${taskName}");
-    print("Before Value: ${this.tasks[taskName]}");
-    bool v = this.tasks[taskName]!;
-    setState(() {
-      this.tasks[taskName] = !v;
-    });
-    print("After Value: ${this.tasks[taskName]}");
-    if (v) {
-      this.decreaseCount();
-    } else {
-      this.increaseCount();
-    }
-    print(data);
-  }
+  // updateTask(TaskModel t, String newTaskText) {
+  //   setState(() {
+  //     t.item = newTaskText;
+  //     tasks[tasks.indexWhere((element) => element.id == t.id)] = t;
+  //   });
+  // }
+
+  // toggleisDone(String taskName) {
+  //   print("Task Name: ${taskName}");
+  //   print("Before Value: ${this.tasks[taskName]}");
+  //   bool v = this.tasks[taskName]!;
+  //   setState(() {
+  //     this.tasks[taskName] = !v;
+  //   });
+  //   print("After Value: ${this.tasks[taskName]}");
+  //   if (v) {
+  //     this.decreaseCount();
+  //   } else {
+  //     this.increaseCount();
+  //   }
+  //   print(data);
+  // }
 
   @override
   void initState() {
@@ -99,42 +105,86 @@ class _HomeState extends State<Home> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              HeatMapCalendar(
-                showColorTip: false,
-                defaultColor: Colors.white,
-                flexible: true,
-                colorMode: ColorMode.opacity,
-                datasets: {
-                  DateTime(2023, 6, 9): 5,
-                  DateTime(2023, 6, 13): 6,
-                  DateTime(now.year, now.month, now.day): itemsDone,
-                },
-                colorsets: const {
-                  1: Colors.green,
-                },
-                onClick: (value) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(value.toString())));
-                },
+              Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: HeatMapCalendar(
+                    showColorTip: false,
+                    defaultColor: Colors.white,
+                    flexible: true,
+                    colorMode: ColorMode.opacity,
+                    datasets: {
+                      DateTime(2023, 6, 9): 5,
+                      DateTime(2023, 6, 13): 6,
+                      DateTime(now.year, now.month, now.day): itemsDone,
+                    },
+                    colorsets: const {
+                      1: Colors.green,
+                    },
+                    onClick: (value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(value.toString())));
+                    },
+                  ),
+                ),
               ),
               SizedBox(
                 height: 20,
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks.keys.elementAt(index);
-                    final notifier = tasks[task]!;
-                    return Task(
-                      increaseCount: increaseCount,
-                      decreaseCount: decreaseCount,
-                      updateTasks: updateTask,
-                      deleteTasks: deleteTask,
-                      item: tasks.keys.elementAt(index),
-                      isDone: tasks.values.elementAt(index),
-                      toggleIsDone: toggleisDone,
-                    );
+                child: StreamBuilder(
+                  stream: tasks,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Column(children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 60,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: Text('Error: ${snapshot.error}'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text('Stack trace: ${snapshot.stackTrace}'),
+                        ),
+                      ]);
+                    } else {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                          return Column(children: [
+                            Icon(
+                              Icons.info,
+                              color: Colors.blue,
+                              size: 60,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 16),
+                              child: Text('Select a lot'),
+                            ),
+                          ]);
+                        case ConnectionState.waiting:
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        case ConnectionState.active:
+                          var listOfItems = snapshot.data!;
+                          return ListView.builder(
+                            itemCount: snapshot.data?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              return TaskTile(
+                                taskModel: listOfItems.elementAt(index),
+                              );
+                            },
+                          );
+                        case ConnectionState.done:
+                          return Column(
+                            children: [Text("Done")],
+                          );
+                      }
+                    }
                   },
                 ),
               ),
@@ -156,8 +206,10 @@ class _HomeState extends State<Home> {
                         child: const Text('Cancel'),
                       ),
                       TextButton(
-                        onPressed: () =>
-                            {addNewTaskToTasks(), Navigator.pop(context, 'OK')},
+                        onPressed: () => {
+                          addNewTask(),
+                          Navigator.pop(context, 'OK'),
+                        },
                         child: const Text('OK'),
                       ),
                     ],

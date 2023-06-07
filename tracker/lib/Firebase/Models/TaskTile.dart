@@ -1,39 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:tracker/Firebase/Models/TaskModel.dart';
+import 'package:tracker/Firebase/firebase_helper.dart';
 
-import '../components/rect_textformfield.dart';
+import '../../components/rect_textformfield.dart';
 
-class Task extends StatefulWidget {
-  Task({
+class TaskTile extends StatefulWidget {
+  TaskTile({
     Key? key,
-    required this.updateTasks,
-    required this.deleteTasks,
-    required this.item,
-    required this.isDone,
-    required this.increaseCount,
-    required this.decreaseCount,
-    required this.toggleIsDone,
+    required this.taskModel,
   }) : super(key: key);
 
-  dynamic updateTasks;
-  dynamic deleteTasks;
-  String item;
-  bool isDone;
-  dynamic increaseCount;
-  dynamic decreaseCount;
-  dynamic toggleIsDone;
+  TaskModel taskModel;
 
   @override
-  State<Task> createState() => _TaskState();
+  State<TaskTile> createState() => _TaskTileState();
 }
 
-class _TaskState extends State<Task> {
+class _TaskTileState extends State<TaskTile> {
   TextEditingController currentTask = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    currentTask.text = widget.item;
+    currentTask.text = widget.taskModel.item;
+  }
+
+  updateCheckBox(bool? value) {
+    setState(() {
+      widget.taskModel.isDone = value!;
+    });
+    widget.taskModel.updateTask();
+  }
+
+  updateTaskText() {
+    setState(() {
+      widget.taskModel.item = currentTask.text;
+    });
+    widget.taskModel.updateTask();
+    Navigator.pop(context, 'OK');
+  }
+
+  deleteTask() {
+    widget.taskModel.deleteTask();
   }
 
   @override
@@ -55,21 +64,13 @@ class _TaskState extends State<Task> {
               Row(
                 children: [
                   Checkbox(
-                    value: widget.isDone,
-                    onChanged: (_) {
-                      widget.toggleIsDone(widget.item);
-                    },
-                    // onChanged: (bool? value) {
-                    //   setState(() {
-                    //     widget.isDone = value!;
-                    //   });
-                    //   widget.increaseCount();
-                    // },
+                    value: widget.taskModel.isDone,
+                    onChanged: updateCheckBox,
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  Text(widget.item),
+                  Text(widget.taskModel.item),
                 ],
               ),
               Row(
@@ -91,11 +92,7 @@ class _TaskState extends State<Task> {
                             child: const Text('Cancel'),
                           ),
                           TextButton(
-                            onPressed: () => {
-                              widget.updateTasks(
-                                  widget.item, widget.isDone, currentTask.text),
-                              Navigator.pop(context, 'OK'),
-                            },
+                            onPressed: updateTaskText,
                             child: const Text('OK'),
                           ),
                         ],
@@ -110,7 +107,7 @@ class _TaskState extends State<Task> {
                     width: 10,
                   ),
                   GestureDetector(
-                    onTap: () => {widget.deleteTasks(widget.item)},
+                    onTap: deleteTask,
                     child: HeroIcon(
                       HeroIcons.xCircle,
                       color: Colors.red.shade400,
