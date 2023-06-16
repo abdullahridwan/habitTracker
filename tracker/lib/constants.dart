@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:ms_undraw/ms_undraw.dart';
 import 'package:tracker/screens/onboarding_screen.dart';
 
+Color kPrimaryColor = Colors.blue.shade900;
+double kBorderRadius = 12;
+
 // Determines the onboarding screen information
 final List<Onboard> demo_data = [
   Onboard(
@@ -24,7 +27,3 @@ final List<Onboard> demo_data = [
         "Our goal is to put all the amazing halal places in one place. \nFind and explore neighborhood stores around you! \n Let's get started!",
   ),
 ];
-
-//Step 2: Add any tabs or pages to the screen router
-
-double kBorderRadius = 4;
